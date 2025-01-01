@@ -8,17 +8,52 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @State private var isShowingAddHabit: Bool = false
+    @ObservedObject var habitStore: HabitStore
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationStack {
+            List {
+                ForEach(habitStore.allHabits) { habit in
+                    NavigationLink {
+                        DisplayHabitView()
+                    } label: {
+                        VStack(alignment: .leading) {
+                            HStack {
+                                Text(habit.name)
+                                    .bold()
+                                
+                                Text(habit.counter.codingKey.stringValue)
+                            }
+                            
+                            Text(habit.description)
+                                .font(.subheadline)
+                                .padding()
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Habit Tracker")
+            .toolbar {
+                Button {
+                    isShowingAddHabit.toggle()
+                } label: {
+                    HStack {
+                        Image(systemName: "plus.circle.fill")
+                        Text("Add habit")
+                    }
+                }
+            }
+            .navigationDestination(isPresented: $isShowingAddHabit, destination: {
+                AddHabitView(habitStore: habitStore)
+            })
         }
-        .padding()
     }
 }
 
 #Preview {
-    ContentView()
+    let previewStore = HabitStore(userDefaultsKey: UUID().uuidString)
+
+    return ContentView(habitStore: previewStore)
 }

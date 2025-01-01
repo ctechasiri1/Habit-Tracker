@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct Habit_TrackerApp: App {
+    let habitStore = HabitStore(userDefaultsKey: "MainHabitStorageKey")
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(habitStore: habitStore)
         }
     }
 }
