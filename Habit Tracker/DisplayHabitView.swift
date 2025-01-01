@@ -9,6 +9,7 @@ import SwiftUI
 
 struct DisplayHabitView: View {
     var body: some View {
+        // Display the habit when it clicks on it
         Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
     }
 }

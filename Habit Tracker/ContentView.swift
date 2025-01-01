@@ -25,6 +25,8 @@ struct ContentView: View {
                                     .bold()
                                 
                                 Text(habit.counter.codingKey.stringValue)
+                                
+                                // I need to add the habit count
                             }
                             
                             Text(habit.description)
