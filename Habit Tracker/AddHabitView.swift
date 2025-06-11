@@ -5,47 +5,55 @@
 //  Created by Chiraphat Techasiri on 12/4/24.
 //
 
+import SwiftData
 import SwiftUI
 
 struct AddHabitView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    @Environment(\.modelContext) var modelContext
+    @Query var habits: [Habit]
     
     @State private var habitName: String = ""
     @State private var habitDescription: String = ""
-    @State private var habitCounter: Int = 0
-    
-    @ObservedObject var habitStore: HabitStore
+    @State private var charLimitName = 20
+    @State private var charLimitDesc = 100
     
     var body: some View {
         NavigationStack {
             Form {
-                Section("Habit Name") {
-                    TextField("Add a habit", text: $habitName)
+                Section("Habit name") {
+                    TextField("Add your details here", text: $habitName)
+                        .onChange(of: habitName) {
+                            if habitName.count > charLimitName {
+                                habitName = String(habitName.prefix(charLimitName))
+                            }
+                        }
                 }
                 Section("Habit Description") {
                     TextField("Add your details here", text: $habitDescription, axis: .vertical)
+                        .onChange(of: habitDescription) {
+                            if habitDescription.count > charLimitDesc {
+                                habitDescription = String(habitDescription.prefix(charLimitDesc))
+                            }
+                        }
                 }
             }
-            .navigationTitle("Add a Habit")
+            .navigationTitle("Add Habit")
             .toolbar {
-                Button {
-                    // I need to know how to save data properly this isn't how you encode and decode data in a json file
-                    let newHabit = Habit(
-                        name: habitName,
-                        description: habitDescription, 
-                        counter: habitCounter
-                    )
-                    
-                    habitStore.allHabits.append(newHabit)
-                    
-                    habitName = ""
-                    habitDescription = ""
-                    
-                    self.presentationMode.wrappedValue.dismiss()
-                    
-                } label: {
-                    Text("Save")
-                        .padding()
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Cancel") {
+                        self.presentationMode.wrappedValue.dismiss()
+                    }
+                }
+
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Save") {
+                        let habit = Habit(habitName: habitName, habitDescription: habitDescription)
+                        
+                        modelContext.insert(habit)
+                        
+                        self.presentationMode.wrappedValue.dismiss()
+                    }
                 }
             }
         }
@@ -53,7 +61,5 @@ struct AddHabitView: View {
 }
 
 #Preview {
-    let previewStore = HabitStore(userDefaultsKey: UUID().uuidString)
-
-    return AddHabitView(habitStore: previewStore)
+    AddHabitView()
 }

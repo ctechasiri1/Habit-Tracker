@@ -5,15 +5,15 @@
 //  Created by Chiraphat Techasiri on 12/4/24.
 //
 
+import SwiftData
 import SwiftUI
 
 @main
 struct Habit_TrackerApp: App {
-    let habitStore = HabitStore(userDefaultsKey: "MainHabitStorageKey")
-    
     var body: some Scene {
         WindowGroup {
-            ContentView(habitStore: habitStore)
+            ContentView()
+                .modelContainer(for: Habit.self)
         }
     }
 }
